@@ -1,0 +1,199 @@
+version: "1.0"
+agent_id: "linear-ticket-generation-agent"
+
+tables:
+  result_ticket_template_config:
+    description: "Stores the active ticket template, required field rules, and default routing configuration version."
+    writable: true
+    write_mode: upsert
+    columns:
+      id:
+        type: uuid
+        required: true
+        auto_generate: true
+        description: Primary key
+      run_id:
+        type: text
+        description: OpenClaw run identifier
+      template_key:
+        type: text
+        required: true
+        description: Stable identifier for the ticket template
+      template_name:
+        type: text
+        required: true
+        description: "Human-readable template name"
+      version:
+        type: text
+        required: true
+        description: Template version label
+      required_fields:
+        type: jsonb
+        required: true
+        description: Required fields and validation rules
+      field_rules:
+        type: jsonb
+        required: true
+        description: Guidance for field population and normalization
+      active:
+        type: boolean
+        required: true
+        description: Whether this template is active
+      created_at:
+        type: datetime
+        required: true
+        auto_generate: true
+        description: Creation timestamp
+      updated_at:
+        type: datetime
+        required: true
+        auto_generate: true
+        description: Last update timestamp
+    conflict_columns:
+      - template_key
+    indexes:
+      - columns: [active]
+        name: result_ticket_template_config_active_idx
+      - columns: [template_key, active]
+        name: result_ticket_template_config_template_key_active_idx
+  result_ticket_routing_map:
+    description: "Stores routing rules for team, project, labels, priority, and assignee resolution."
+    writable: true
+    write_mode: upsert
+    columns:
+      id:
+        type: uuid
+        required: true
+        auto_generate: true
+        description: Primary key
+      run_id:
+        type: text
+        description: OpenClaw run identifier
+      routing_key:
+        type: text
+        required: true
+        description: Stable key for a routing rule
+      template_key:
+        type: text
+        required: true
+        description: Template this route belongs to
+      team_name:
+        type: text
+        required: true
+        description: Logical team name used for routing
+      linear_team_id:
+        type: text
+        required: true
+        description: Target Linear team id
+      linear_project_id:
+        type: text
+        description: Optional Linear project id
+      label_rules:
+        type: jsonb
+        required: true
+        description: Labels to apply or infer
+      priority_rule:
+        type: jsonb
+        required: true
+        description: Priority defaults and mapping logic
+      assignee_rule:
+        type: jsonb
+        description: Optional assignee selection rule
+      active:
+        type: boolean
+        required: true
+        description: Whether the mapping is active
+      created_at:
+        type: datetime
+        required: true
+        auto_generate: true
+        description: Creation timestamp
+      updated_at:
+        type: datetime
+        required: true
+        auto_generate: true
+        description: Last update timestamp
+    conflict_columns:
+      - routing_key
+    indexes:
+      - columns: [template_key, active]
+        name: result_ticket_routing_map_template_key_active_idx
+      - columns: [linear_team_id]
+        name: result_ticket_routing_map_linear_team_id_idx
+  result_ticket_intake_log:
+    description: "Records each draft, approval decision, and publish result with lightweight traceability."
+    writable: true
+    write_mode: upsert
+    columns:
+      id:
+        type: uuid
+        required: true
+        auto_generate: true
+        description: Primary key
+      run_id:
+        type: text
+        description: OpenClaw run identifier
+      request_id:
+        type: text
+        required: true
+        description: Stable request or idempotency key
+      template_key:
+        type: text
+        required: true
+        description: Template used for the run
+      source_channel:
+        type: text
+        required: true
+        description: "Slack, CLI, API, email, or meeting-note source"
+      source_ref:
+        type: text
+        description: "Source message, thread, or reference"
+      raw_input:
+        type: text
+        required: true
+        description: Original unstructured input
+      structured_input:
+        type: jsonb
+        description: Optional structured payload provided by caller
+      extracted_draft:
+        type: jsonb
+        description: Structured ticket draft produced by the agent
+      validation_status:
+        type: text
+        required: true
+        description: "ready_for_review, needs_clarification, or failed"
+      approval_status:
+        type: text
+        required: true
+        description: "pending, approved, rejected, published, or blocked"
+      linear_issue_id:
+        type: text
+        description: Created Linear issue id
+      linear_issue_url:
+        type: text
+        description: Created Linear issue URL
+      error_code:
+        type: text
+        description: "Machine-readable error code"
+      error_message:
+        type: text
+        description: "Human-readable error message"
+      created_at:
+        type: datetime
+        required: true
+        auto_generate: true
+        description: Creation timestamp
+      updated_at:
+        type: datetime
+        required: true
+        auto_generate: true
+        description: Last update timestamp
+    conflict_columns:
+      - request_id
+    indexes:
+      - columns: [template_key, created_at]
+        name: result_ticket_intake_log_template_key_created_at_idx
+      - columns: [source_channel, created_at]
+        name: result_ticket_intake_log_source_channel_created_at_idx
+      - columns: [approval_status, created_at]
+        name: result_ticket_intake_log_approval_status_created_at_idx

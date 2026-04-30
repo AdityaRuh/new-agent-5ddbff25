@@ -1,0 +1,55 @@
+infrastructure:
+  - key: PG_CONNECTION_STRING
+    label: PostgreSQL connection string
+    required: true
+    secret: true
+  - key: ORG_ID
+    label: Organization ID
+    required: true
+    secret: false
+  - key: AGENT_ID
+    label: Agent ID
+    required: true
+    secret: false
+  - key: DEFAULT_TIMEZONE
+    label: Default timezone
+    required: true
+    secret: false
+  - key: LINEAR_TEMPLATE_KEY
+    label: Active Linear ticket template key
+    required: true
+    secret: false
+  - key: LINEAR_TEAM_MAP
+    label: Linear routing map payload
+    required: true
+    secret: false
+connector:
+  - key: LINEAR_API_KEY
+    label: Linear API key
+    required: true
+    secret: true
+  - key: OPENAI_API_KEY
+    label: OpenAI API key
+    required: true
+    secret: true
+  - key: GITHUB_TOKEN
+    label: GitHub token for repository sync
+    required: true
+    secret: true
+  - key: GITHUB_OWNER
+    label: GitHub owner or organization
+    required: true
+    secret: false
+  - key: AGENT_REPO_NAME
+    label: Agent repository name
+    required: true
+    secret: false
+channel:
+  - key: SLACK_BOT_TOKEN
+    label: Slack bot token
+    required: true
+    secret: true
+  - key: SLACK_SIGNING_SECRET
+    label: Slack signing secret
+    required: true
+    secret: true

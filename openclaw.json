@@ -1,0 +1,42 @@
+{
+  "name": "linear-ticket-generation-agent",
+  "version": "1.0.0",
+  "description": "Slack-first agent that drafts, reviews, and publishes template-compliant Linear tickets after explicit human approval.",
+  "agent_metadata": {
+    "agent_name": "linear-ticket-generation-agent",
+    "agent_id": "linear-ticket-generation-agent",
+    "avatar": "🧾",
+    "tone": "Clear, concise, operationally helpful, and approval-aware.",
+    "domain": "Slack-first Linear ticket generation and publishing",
+    "primary_users": "Product managers, engineering leads, operations/program managers, and requesting contributors",
+    "automation_type": "hybrid"
+  },
+  "skills": [
+    "data-writer",
+    "result-query",
+    "github-action",
+    "ticket-intake-normalizer",
+    "linear-ticket-publisher"
+  ],
+  "workflows": {
+    "main": "workflows/main.yaml"
+  },
+  "cron": {},
+  "env": {
+    "required": [
+      "PG_CONNECTION_STRING",
+      "ORG_ID",
+      "AGENT_ID",
+      "DEFAULT_TIMEZONE",
+      "LINEAR_TEMPLATE_KEY",
+      "LINEAR_TEAM_MAP",
+      "LINEAR_API_KEY",
+      "OPENAI_API_KEY",
+      "GITHUB_TOKEN",
+      "GITHUB_OWNER",
+      "AGENT_REPO_NAME",
+      "SLACK_BOT_TOKEN",
+      "SLACK_SIGNING_SECRET"
+    ]
+  }
+}
